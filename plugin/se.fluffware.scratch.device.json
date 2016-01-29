@@ -1,0 +1,10 @@
+{
+  "name": "edu.mit.scratch.device",
+  "description": "Scratch Device Plugin for Linux",
+  "path": "/home/ksb/projects/scratch_plugin/src/ScratchDeviceHost",
+  "type": "stdio",
+  "allowed_origins": [
+      "chrome-extension://clmabinlolakdafkoajkfjjengcdmnpm/",
+      "chrome-extension://hmffadocmenikmedomnhfaadhfgjmmip/"
+  ]
+}
