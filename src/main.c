@@ -10,6 +10,7 @@
 #include <signal.h>
 #include <json_parse.h>
 #include <serial.h>
+#include <config_file.h>
 #include <debug.h>
 #include <termios.h>
 
@@ -65,8 +66,8 @@ struct AppContext
   unsigned int out_buffer_capacity;
   unsigned int out_len;
 
-  char **available_serial_ports;
   struct SerialPort *serial_ports;
+  struct ConfigData *config_data;
 };
 
 static void
@@ -158,7 +159,7 @@ version_handler(const uint8_t **pp, struct AppContext *app)
 static void 
 serial_list_handler(const uint8_t **pp, struct AppContext *app)
 {
-  char **port = app->available_serial_ports;
+  char **port = app->config_data->serial_ports;
   reply_append(app,"[");
   while(*port) {
     reply_append(app,"\"");
@@ -297,7 +298,7 @@ serial_recv(struct pollfd *poll, void *cb_data)
       reply_append(app,"\"]");
       reply_send(app);
       app->out_buffer[app->out_len] = '\0';
-      PRINTERR("Serial recv: %s\n", app->out_buffer);
+      PRINTDEBUG("Serial recv: %s\n", app->out_buffer);
     } else {
       return 0;
     }
@@ -534,7 +535,7 @@ parse_request(const uint8_t *p, struct AppContext *app)
     return;
   }
   command[str.length] = '\0';
-  PRINTERR("Command: %s\n", command);
+  PRINTDEBUG("Command: %s\n", command);
   
   while (cmd->command) {
     if (strcmp((const char*)command, cmd->command) == 0) {
@@ -544,7 +545,7 @@ parse_request(const uint8_t *p, struct AppContext *app)
       reply_append(app,"]");
       reply_send(app);
       app->out_buffer[app->out_len] = '\0';
-      PRINTERR("Reply: %s\n", app->out_buffer);
+      PRINTDEBUG("Reply: %s\n", app->out_buffer);
       break;
     }
     cmd++;
@@ -563,7 +564,6 @@ handle_stdin(struct pollfd *poll, void *cb_data)
     r = app->in_len - app->in_pos;
   }
   r = read(poll->fd, app->in_buffer + app->in_pos, r);
-  PRINTERR("read %d\n", r);
   if (r == 0) return 0; /* EOF */
   if (r < 0) {
     PRINTERR("Failed to read stdin: %s\n", strerror(errno));
@@ -579,7 +579,7 @@ handle_stdin(struct pollfd *poll, void *cb_data)
     app->in_pos = 0;
   } else if (app->in_pos > 0 && app->in_pos ==  app->in_len) {
     app->in_buffer[app->in_len] = '\0'; /* NUL terminate buffer */
-    PRINTERR("'%s'\n", app->in_buffer);
+    PRINTDEBUG("'%s'\n", app->in_buffer);
     parse_request(app->in_buffer, app);
     app->in_len = 0;
     app->in_pos = 0;
@@ -596,23 +596,23 @@ handle_sig(int s)
   exit_pending = 1;
 }
 
-static char *serial_ports[] =
-  {
-    "/dev/ttyS0",
-    "/dev/ttyUSB0",
-    "/dev/ttyACM0",
-    "/dev/ttyScratch",
-    NULL
-  };
-  
 int
 main(int argc, char *argv[])
 {
+  char conf_filename[200];
   struct AppContext app;
   struct sigaction sig_handler;
-  fprintf(stderr, "Device host started\n");
-  app.available_serial_ports = serial_ports;
+  PRINTDEBUG("Device host started\n");
   app.serial_ports = NULL;
+  app.config_data = NULL;
+
+  snprintf(conf_filename, sizeof(conf_filename), "%s.json", argv[0]);
+  app.config_data = config_data_read(conf_filename);
+  if (!app.config_data) {
+    PRINTERR("Failed to read configuration file\n");
+    return EXIT_FAILURE;
+  }
+  
   app.in_pos = 0;
   app.in_len = 0;
   app.in_buffer_capacity = 1023;
@@ -668,7 +668,7 @@ main(int argc, char *argv[])
       }
     }
   }
-  fprintf(stderr, "Exiting\n");
+  PRINTDEBUG("Exiting\n");
   app_cleanup(&app);
   return EXIT_SUCCESS;
 }

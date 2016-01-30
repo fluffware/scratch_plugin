@@ -134,7 +134,7 @@ void
 json_skip_white(const uint8_t **pp)
 {
   const uint8_t *p = *pp;
-  while(*p == ' ' || *p == '\t') p++;
+  while(*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') p++;
   *pp = p;
 }
 
@@ -176,7 +176,7 @@ json_iterate_array(const uint8_t **pp,
     if (!callback(&p, cb_data)) return 0;
   }
       
-  *pp = p;
+  *pp = p + 1;
   return 1;
 }
 

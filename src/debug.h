@@ -4,5 +4,6 @@
 #include <stdio.h>
 
 #define PRINTERR(...) fprintf(stderr,  __VA_ARGS__)
+#define PRINTDEBUG(...) fprintf(stderr,  __VA_ARGS__)
 
 #endif /* __DEBUG_H__VP2LBB6GPL__ */

@@ -1,0 +1,3 @@
+{
+    "serial_ports":["/dev/ttyACM0", "/dev/ttyUSB0", "/dev/ttyS0"]
+}
