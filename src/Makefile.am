@@ -13,4 +13,4 @@ debug.h
 
 ScratchDeviceHost_LDADD=
 
-plugin_DATA=$(top_srcdir)/plugin/se.fluffware.scratch.device.json ScratchDeviceHost.json
+plugin_DATA=$(top_srcdir)/plugin/edu.mit.scratch.device.json ScratchDeviceHost.json

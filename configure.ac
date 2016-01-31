@@ -7,5 +7,5 @@ AC_PROG_CC_STDC
 plugindir=$HOME/.config/google-chrome/NativeMessagingHosts
 AC_SUBST(plugindir)
 
-AC_CONFIG_FILES([Makefile src/Makefile plugin/se.fluffware.scratch.device.json])
+AC_CONFIG_FILES([Makefile src/Makefile plugin/edu.mit.scratch.device.json])
 AC_OUTPUT
