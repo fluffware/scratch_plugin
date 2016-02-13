@@ -1,5 +1,6 @@
-#ifndef __SERIAL_H__4M7RM0EJOZ__
-#define __SERIAL_H__4M7RM0EJOZ__
+#ifndef __SERIAL_H__MBUJQ8UMMF__
+#define __SERIAL_H__MBUJQ8UMMF__
+
 #include <stdint.h>
 
 struct SerialOpts
@@ -12,7 +13,4 @@ struct SerialOpts
   uint8_t stopBits;
 };
 
-int
-serial_open(const char *path, struct SerialOpts *opts);
-
-#endif /* __SERIAL_H__4M7RM0EJOZ__ */
+#endif /* __SERIAL_H__MBUJQ8UMMF__ */
