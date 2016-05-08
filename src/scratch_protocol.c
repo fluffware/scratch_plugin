@@ -280,9 +280,9 @@ scratch_protocol_message_handler(struct ScratchProtocol *sp,
       native_message_printf(sp->nm,"[\"@\",\"%s\",", token); 
       cmd->handler(&p, sp);
       native_message_append_str(sp->nm,"]");
+      sp->nm->out_buffer[sp->nm->out_len] = '\0';
+      PRINTDEBUG("Reply: %d '%s'\n", sp->nm->out_len-4, sp->nm->out_buffer+4);
       native_message_send(sp->nm);
-      sp->nm->out_buffer[sp->nm->out_len-4] = '\0';
-      PRINTDEBUG("Reply: %s\n", sp->nm->out_buffer+4);
       break;
     }
     cmd++;

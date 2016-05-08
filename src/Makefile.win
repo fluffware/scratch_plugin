@@ -1,0 +1,16 @@
+CC=i686-pc-mingw32-gcc
+LD=i686-pc-mingw32-gcc
+CFLAGS=-g -Wall -pedantic --std=c99
+INCLUDES=-I .
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+ 
+ScratchDeviceHost: main_win.o native_message.o scratch_protocol.o json_parse.o
+	$(LD) -mconsole $(CFLAGS) $^ -o $@
+
+
+
+clean:
+	-rm *.o
+	-rm ScratchDeviceHost.exe
+	
